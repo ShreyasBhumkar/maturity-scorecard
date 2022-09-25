@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { collection, getDocs } from "firebase/firestore"
+import React, { useState } from 'react'
+import { collection, getDocs, doc, deleteDoc } from "firebase/firestore"
 import { db } from '../lib/init-firebase'
 
 const MovieList = () => {
@@ -25,6 +25,13 @@ const getMovies = () => {
         setMovies(movs)
     }).catch(error => console.log("Error Message..!", error.message))
 }
+
+const deleteMovie = (id) => {
+    const deleteMovieRef = doc(db, "movies", id)
+    deleteDoc(deleteMovieRef)
+        .then(() => console.log('Movie id Deleted Successfully.!'))
+        .catch(error => console.log("Error..", error.message))
+}
 return (
     <div>
         <div style={{marginLeft:'20px'}} className='container'>
@@ -37,6 +44,7 @@ return (
                 <tr>
                     <th scope="col">Movie Id</th>
                     <th scope="col">Movie Name</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,10 +53,17 @@ return (
                         <tr key={movie.id}>
                             <th scope="row">{movie.id}</th>
                             <td>{movie.data.name}</td>
+                            <td>
+                                <button 
+                                    className='btn btn-danger'
+                                    onClick={() => deleteMovie(movie.id)}
+                                >
+                                    Delete Movie
+                                </button>
+                            </td>
                         </tr>
                     ))
                 }
-                
             </tbody>
             </table>
         </div>
